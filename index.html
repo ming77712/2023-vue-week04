@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>產品列表</title>
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/sweetalert2@11.10.3/dist/sweetalert2.min.css"
+    />
+  </head>
+  <body>
+    <style>
+      img {
+        object-fit: contain;
+        max-width: 100%;
+      }
+      .primary-image {
+        height: 300px;
+      }
+      .images {
+        height: 150px;
+      }
+    </style>
+    <div id="app">
+      <div v-if="token" class="container">
+        <div class="text-end mt-4">
+          <button
+            @click="openModal('uploadImgModal')"
+            class="btn btn-primary me-2"
+          >
+            上傳圖片
+          </button>
+          <button @click="openModal('productModal')" class="btn btn-primary">
+            建立新的產品
+          </button>
+        </div>
+        <table class="table mt-4">
+          <thead>
+            <tr>
+              <th width="120">分類</th>
+              <th>產品名稱</th>
+              <th width="120">原價</th>
+              <th width="120">售價</th>
+              <th width="100">是否啟用</th>
+              <th width="120">查看細節</th>
+              <th width="120">編輯</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr v-for="item in products" :key="item.id">
+              <td>{{ item.category }}</td>
+              <td>{{ item.title }}</td>
+              <td>{{ item.origin_price }}</td>
+              <td>{{ item.price }}</td>
+              <td>
+                <span :class="item.is_enabled ? 'text-success' : 'text-danger'"
+                  >{{ item.is_enabled ? "啟用" : "未啟用" }}</span
+                >
+              </td>
+              <td width="120">
+                <button
+                  type="button"
+                  class="btn btn-primary"
+                  @click="openModal('productDetailModal', item)"
+                >
+                  查看細節
+                </button>
+              </td>
+              <td>
+                <div class="btn-group">
+                  <button
+                    @click="openModal('editModal', item)"
+                    type="button"
+                    class="btn btn-outline-primary btn-sm"
+                  >
+                    編輯
+                  </button>
+                  <button
+                    @click="openModal('delProductModal', item)"
+                    type="button"
+                    class="btn btn-outline-danger btn-sm"
+                  >
+                    刪除
+                  </button>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+        <pagination
+          :pages="pagination"
+          @change-page="getAllProduct"
+        ></pagination>
+      </div>
+      <!-- 登入前 -->
+      <div v-else class="container">
+        <div class="row justify-content-center">
+          <h1 class="h3 my-3 font-weight-normal text-center">請先登入</h1>
+          <div class="col-8">
+            <form id="form" class="form-signin">
+              <div class="form-floating mb-3">
+                <input
+                  v-model="user.username"
+                  type="email"
+                  class="form-control"
+                  id="username"
+                  placeholder="name@example.com"
+                  required
+                  autofocus
+                />
+                <label for="username">Email address</label>
+              </div>
+              <div class="form-floating">
+                <input
+                  v-model="user.password"
+                  type="password"
+                  class="form-control"
+                  id="password"
+                  placeholder="Password"
+                  required
+                />
+                <label for="password">Password</label>
+              </div>
+              <button
+                @click.prevent="login"
+                class="btn btn-lg btn-primary w-100 mt-3"
+                type="submit"
+              >
+                登入
+              </button>
+            </form>
+          </div>
+        </div>
+        <p class="mt-5 mb-3 text-muted text-center">&copy; 2021~∞ - 六角學院</p>
+      </div>
+      <Product-Detail-Modal
+        :current-detail-product="currentProduct"
+        @product-detail-instance="getProductDetailModal"
+      ></Product-Detail-Modal>
+      <Product-Modal
+        :current-product="currentProduct"
+        :is-new="isNew"
+        :url-setting="urlSetting"
+        @product-instance="getProductModal"
+        @refresh-products="refreshProducts"
+      ></Product-Modal>
+      <Product-Delete-Modal
+        :current-product="currentProduct"
+        :url-setting="urlSetting"
+        @product-delete-instance="getProductDeleteModal"
+        @refresh-products="refreshProducts"
+      ></Product-Delete-Modal>
+      <Upload-Img-Modal
+        :url-setting="urlSetting"
+        @upload-img-instance="getUploadImgModal"
+      ></Upload-Img-Modal>
+    </div>
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.9.1/axios.min.js"
+      integrity="sha512-Xk3wWei2TGrsh9kDSBKUMIjw/86sLUvhtnv9f7fOuIwhhiUTKz8szkWkzHthrM5Bb3Bu9idSzkxOrkzhcneuiw=="
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.1/dist/umd/popper.min.js"
+      integrity="sha384-SR1sx49pcuLnqZUnnPwx6FCym0wLsk5JZuNx2bPPENzswTNFaQU1RDvt3wT4gWFG"
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="https://cdn.jsdelivr.net/npm/sweetalert2@11.10.3/dist/sweetalert2.all.min.js"
+      crossorigin="anonymous"
+    ></script>
+    <script type="module">
+      import { createApp } from "https://unpkg.com/vue@3/dist/vue.esm-browser.js";
+
+      import ProductDetailModal from "./components/productDetailModal.js";
+      import ProductModal from "./components/productModal.js";
+      import ProductDeleteModal from "./components/productDeleteModal.js";
+      import Pagination from "./components/pagination.js";
+      import UploadImgModal from "./components/uploadImgModal.js";
+
+      const sweetMessage = {
+        icon: "",
+        title: "",
+        showConfirmButton: false,
+        timer: 1500,
+      };
+
+      const app = {
+        data() {
+          return {
+            urlSetting: {
+              url: "https://ec-course-api.hexschool.io/v2",
+              path: "ming777",
+            },
+            productDetailModal: null,
+            productModal: null,
+            delProductModal: null,
+            uploadImgModal: null,
+            token: "",
+            user: {
+              username: "",
+              password: "",
+            },
+            currentProduct: {
+              imagesUrl: [],
+            },
+            products: [],
+            pagination: {},
+            isNew: false,
+          };
+        },
+        components: {
+          ProductDetailModal,
+          ProductModal,
+          ProductDeleteModal,
+          Pagination,
+          UploadImgModal,
+        },
+        methods: {
+          login() {
+            axios
+              .post(`${this.urlSetting.url}/admin/signin`, this.user)
+              .then((res) => {
+                const { token, expired } = res.data;
+                document.cookie = `hexToken= ${token}; expires=${new Date(
+                  expired
+                )};`;
+                this.setSweetMessageSuccess(res.data.message);
+                Swal.fire(sweetMessage);
+                setTimeout(() => {
+                  this.checkLogin();
+                }, 1500);
+              })
+              .catch((err) => {
+                this.setSweetMessageError(err.data.message);
+                Swal.fire(sweetMessage);
+              });
+          },
+          checkLogin() {
+            this.token = document.cookie.replace(
+              /(?:(?:^|.*;\s*)hexToken\s*\=\s*([^;]*).*$)|^.*$/,
+              "$1"
+            );
+            axios.defaults.headers.common["Authorization"] = this.token;
+            if (this.token) {
+              axios
+                .post(`${this.urlSetting.url}/api/user/check`)
+                .then(() => {
+                  this.getAllProduct();
+                })
+                .catch((err) => {
+                  this.setSweetMessageError(err.data.message);
+                  Swal.fire(sweetMessage);
+                });
+            }
+          },
+          getAllProduct(page = 1) {
+            axios
+              .get(
+                `${this.urlSetting.url}/api/${this.urlSetting.path}/admin/products?page=${page}`
+              )
+              .then((res) => {
+                const { products, pagination } = res.data;
+                this.products = products;
+                this.pagination = pagination;
+                // 使用 all API, 取得 products
+                // Object.values(res.data.products).forEach((item) => {
+                //   this.products.push(item);
+                // });
+              })
+              .catch((err) => {
+                this.setSweetMessageError(err.data.message);
+                Swal.fire(sweetMessage);
+              });
+          },
+          getProductDetailModal(productDetailModel) {
+            this.productDetailModal = productDetailModel;
+          },
+          getProductModal(productModel) {
+            this.productModal = productModel;
+          },
+          getProductDeleteModal(productDeleteModel) {
+            this.delProductModal = productDeleteModel;
+          },
+          getUploadImgModal(uploadImgModel) {
+            this.uploadImgModal = uploadImgModel;
+          },
+          refreshProducts() {
+            this.getAllProduct();
+          },
+          openModal(modalName, item) {
+            if (modalName === "productDetailModal") {
+              this.currentProduct = { ...item };
+              this.productDetailModal.show();
+            } else if (modalName === "productModal") {
+              this.currentProduct = { imagesUrl: [] };
+              this.isNew = true;
+              this.productModal.show();
+            } else if (modalName === "editModal") {
+              this.currentProduct = { ...item };
+              this.isNew = false;
+              this.productModal.show();
+            } else if (modalName === "delProductModal") {
+              this.currentProduct = { ...item };
+              this.delProductModal.show();
+            } else if (modalName === "uploadImgModal") {
+              this.uploadImgModal.show();
+            }
+          },
+          setSweetMessageSuccess(res) {
+            sweetMessage.icon = "success";
+            sweetMessage.title = res;
+            sweetMessage.timer = 1500;
+          },
+          setSweetMessageError(err) {
+            sweetMessage.icon = "error";
+            sweetMessage.title = err;
+            sweetMessage.timer = 2500;
+          },
+        },
+        mounted() {
+          this.checkLogin();
+        },
+      };
+
+      createApp(app).mount("#app");
+    </script>
+  </body>
+</html>
