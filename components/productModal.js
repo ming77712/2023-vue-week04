@@ -1,5 +1,5 @@
 export default {
-  props: ["currentProduct", "isNew", "urlSetting"],
+  props: ["currentProduct", "isNew"],
   data() {
     return {
       productModal: null,
@@ -14,7 +14,8 @@ export default {
       },
     };
   },
-  template: `<div
+  template:`
+<div
     id="productModal"
     ref="productModal"
     class="modal fade"
@@ -36,7 +37,7 @@ export default {
             aria-label="Close"
           ></button>
         </div>
-        <div class="modal-body">
+<div class="modal-body">
           <div class="row mb-4">
             <div class="col-sm-4">
               <div class="mb-2">
@@ -59,7 +60,7 @@ export default {
                 />
               </div>
             </div>
-            <div class="col-sm-8">
+<div class="col-sm-8">
               <div class="mb-3">
                 <label for="title" class="form-label">標題</label>
                 <input
@@ -71,7 +72,7 @@ export default {
                 />
               </div>
 
-              <div class="row">
+<div class="row">
                 <div class="mb-3 col-md-6">
                   <label for="category" class="form-label">分類</label>
                   <input
@@ -82,7 +83,7 @@ export default {
                     v-model="tempProduct.category"
                   />
                 </div>
-                <div class="mb-3 col-md-6">
+<div class="mb-3 col-md-6">
                   <label for="price" class="form-label">單位</label>
                   <input
                     id="unit"
@@ -93,7 +94,7 @@ export default {
                   />
                 </div>
               </div>
-              <div class="row">
+<div class="row">
                 <div class="mb-3 col-md-6">
                   <label for="origin_price" class="form-label">原價</label>
                   <input
@@ -105,7 +106,7 @@ export default {
                     v-model.number="tempProduct.origin_price"
                   />
                 </div>
-                <div class="mb-3 col-md-6">
+<div class="mb-3 col-md-6">
                   <label for="price" class="form-label">售價</label>
                   <input
                     id="price"
@@ -118,7 +119,7 @@ export default {
                 </div>
               </div>
               <hr />
-              <div class="mb-3">
+<div class="mb-3">
                 <label for="description" class="form-label">產品描述</label>
                 <textarea
                   id="description"
@@ -129,7 +130,7 @@ export default {
                 >
                 </textarea>
               </div>
-              <div class="mb-3">
+<div class="mb-3">
                 <label for="content" class="form-label">說明內容</label>
                 <textarea
                   id="description"
@@ -140,7 +141,7 @@ export default {
                 >
                 </textarea>
               </div>
-              <div class="mb-3">
+<div class="mb-3">
                 <div class="form-check">
                   <input
                     id="is_enabled"
@@ -157,50 +158,52 @@ export default {
               </div>
             </div>
           </div>
-          <h4 class="mb-2">多圖新增</h4>
-          <div v-if="tempProduct.imagesUrl">
-            <div class="row mb-2">
-              <div
-                class="col-6 mb-1"
-                v-for="(image, index) in tempProduct.imagesUrl"
-                :key="index"
-              >
-                <div class="mb-3">
-                  <label :for="'images' + index" class="form-label"
-                    >圖片網址</label
-                  >
-                  <input
-                    :id="'images' + index"
-                    v-model="tempProduct.imagesUrl[index]"
-                    type="text"
-                    class="form-control"
-                    placeholder="請輸入圖片連結"
-                  />
-                </div>
-                <img class="images" :src="image" />
-              </div>
-            </div>
-            <div
-              v-if="!tempProduct.imagesUrl.length || tempProduct.imagesUrl.length < 5"
-            >
-              <button
-                class="btn btn-outline-primary btn-sm d-block w-100 mb-3"
-                @click="tempProduct.imagesUrl.push('')"
-              >
-                新增圖片
-              </button>
-            </div>
-            <div v-if="tempProduct.imagesUrl.length">
-              <button
-                class="btn btn-outline-danger btn-sm d-block w-100"
-                @click="tempProduct.imagesUrl.pop()"
-              >
-                刪除圖片
-              </button>
-            </div>
-          </div>
+<h4 class="mb-2">多圖新增</h4>
+<template v-if="tempProduct.imagesUrl">
+  <div class="row mb-2">
+    <div
+      class="col-6 mb-1"
+      v-for="(image, index) in tempProduct.imagesUrl"
+      :key="index"
+    >
+      <div class="mb-3">
+        <label
+          :for="'images' + index"
+          class="form-label"
+        >圖片網址</label>
+        <input
+          :id="'images' + index"
+          v-model="tempProduct.imagesUrl[index]"
+          type="text"
+          class="form-control"
+          placeholder="請輸入圖片連結"
+        />
+      </div>
+      <img
+        class="images"
+        :src="image"
+      />
+    </div>
+  </div>
+  <template v-if="!tempProduct.imagesUrl.length || tempProduct.imagesUrl.length < 5">
+    <button
+      class="btn btn-outline-primary btn-sm d-block w-100 mb-3"
+      @click="tempProduct.imagesUrl.push('')"
+    >
+      新增圖片
+    </button>
+  </template>
+  <template v-if="tempProduct.imagesUrl.length">
+    <button
+      class="btn btn-outline-danger btn-sm d-block w-100"
+      @click="tempProduct.imagesUrl.pop()"
+    >
+      刪除圖片
+    </button>
+  </template>
+</template>
         </div>
-        <div class="modal-footer">
+<div class="modal-footer">
           <button
             type="button"
             class="btn btn-outline-secondary"
@@ -234,7 +237,7 @@ export default {
         this.tempProduct.imagesUrl.push("");
       axios
         .post(
-          `${this.urlSetting.url}/api/${this.urlSetting.path}/admin/product`,
+          `${urlSetting.url}/api/${urlSetting.path}/admin/product`,
           {
             data: this.tempProduct,
           }
@@ -257,7 +260,7 @@ export default {
         this.tempProduct.imagesUrl.push("");
       axios
         .put(
-          `${this.urlSetting.url}/api/${this.urlSetting.path}/admin/product/${this.tempProduct.id}`,
+          `${urlSetting.url}/api/${urlSetting.path}/admin/product/${this.tempProduct.id}`,
           {
             data: this.tempProduct,
           }

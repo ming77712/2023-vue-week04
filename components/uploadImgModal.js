@@ -1,5 +1,4 @@
 export default {
-  props: ["urlSetting"],
   data() {
     return {
       uploadImgModal: null,
@@ -12,7 +11,8 @@ export default {
       },
     };
   },
-  template: `<div
+  template:`
+<div
       id="uploadImgModal"
       ref="uploadImgModal"
       class="modal fade"
@@ -33,12 +33,12 @@ export default {
               aria-label="Close"
             ></button>
           </div>
-          <div class="modal-body">
+<div class="modal-body">
           <form>
           <input type="file" name="file-to-upload" @change="handleUploadImg">
           </form> 
           </div>
-          <div class="modal-footer">
+<div class="modal-footer">
             <button
               type="button"
               class="btn btn-outline-secondary"
@@ -62,7 +62,7 @@ export default {
     uploadImg() {
       axios
         .post(
-          `${this.urlSetting.url}/api/${this.urlSetting.path}/admin/upload`,
+          `${urlSetting.url}/api/${urlSetting.path}/admin/upload`,
           {
             data: this.img,
           },

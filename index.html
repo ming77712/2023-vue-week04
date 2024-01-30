@@ -195,13 +195,14 @@
         timer: 1500,
       };
 
+      const urlSetting = {
+        url: "https://ec-course-api.hexschool.io/v2",
+        path: "ming777",
+      };
+
       const app = {
         data() {
           return {
-            urlSetting: {
-              url: "https://ec-course-api.hexschool.io/v2",
-              path: "ming777",
-            },
             productDetailModal: null,
             productModal: null,
             delProductModal: null,
@@ -229,7 +230,7 @@
         methods: {
           login() {
             axios
-              .post(`${this.urlSetting.url}/admin/signin`, this.user)
+              .post(`${urlSetting.url}/admin/signin`, this.user)
               .then((res) => {
                 const { token, expired } = res.data;
                 document.cookie = `hexToken= ${token}; expires=${new Date(
@@ -254,7 +255,7 @@
             axios.defaults.headers.common["Authorization"] = this.token;
             if (this.token) {
               axios
-                .post(`${this.urlSetting.url}/api/user/check`)
+                .post(`${urlSetting.url}/api/user/check`)
                 .then(() => {
                   this.getAllProduct();
                 })
@@ -267,7 +268,7 @@
           getAllProduct(page = 1) {
             axios
               .get(
-                `${this.urlSetting.url}/api/${this.urlSetting.path}/admin/products?page=${page}`
+                `${urlSetting.url}/api/${urlSetting.path}/admin/products?page=${page}`
               )
               .then((res) => {
                 const { products, pagination } = res.data;
@@ -311,7 +312,7 @@
               this.isNew = false;
               this.productModal.show();
             } else if (modalName === "delProductModal") {
-              this.currentProduct = { ...item };
+              this.currentProduct = item;
               this.delProductModal.show();
             } else if (modalName === "uploadImgModal") {
               this.uploadImgModal.show();

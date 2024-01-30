@@ -1,5 +1,5 @@
 export default {
-  props: ["currentProduct", "urlSetting"],
+  props: ["currentProduct"],
   data() {
     return {
       delProductModal: null,
@@ -11,7 +11,8 @@ export default {
       },
     };
   },
-  template: `<div
+  template:`
+<div
     id="delProductModal"
     ref="delProductModal"
     class="modal fade"
@@ -32,12 +33,12 @@ export default {
             aria-label="Close"
           ></button>
         </div>
-        <div class="modal-body">
+<div class="modal-body">
           是否刪除
           <strong class="text-danger">{{ currentProduct.title }}</strong>
           商品(刪除後將無法恢復)。
         </div>
-        <div class="modal-footer">
+<div class="modal-footer">
           <button
             type="button"
             class="btn btn-outline-secondary"
@@ -56,7 +57,7 @@ export default {
     delProduct() {
       axios
         .delete(
-          `${this.urlSetting.url}/api/${this.urlSetting.path}/admin/product/${this.currentProduct.id}`
+          `${urlSetting.url}/api/${urlSetting.path}/admin/product/${this.currentProduct.id}`
         )
         .then((res) => {
           this.setSweetMessageSuccess(res.data.message);
