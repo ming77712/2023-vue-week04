@@ -1,5 +1,5 @@
 export default {
-  props: ["currentProduct"],
+  props: ["currentProduct", "urlSetting"],
   data() {
     return {
       delProductModal: null,
@@ -57,7 +57,7 @@ export default {
     delProduct() {
       axios
         .delete(
-          `${urlSetting.url}/api/${urlSetting.path}/admin/product/${this.currentProduct.id}`
+          `${this.urlSetting.url}/api/${this.urlSetting.path}/admin/product/${this.currentProduct.id}`
         )
         .then((res) => {
           this.setSweetMessageSuccess(res.data.message);

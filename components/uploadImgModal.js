@@ -1,8 +1,10 @@
 export default {
+  props: ["urlSetting"],
   data() {
     return {
       uploadImgModal: null,
-      img: null,
+      formData: null,
+      imageUrl: "",
       sweetMessage: {
         icon: "",
         title: "",
@@ -36,7 +38,19 @@ export default {
 <div class="modal-body">
           <form>
           <input type="file" name="file-to-upload" @change="handleUploadImg">
-          </form> 
+          </form>
+              <div>
+                <img :src="imageUrl"/>
+                    <div class="mb-4">
+                          <label for="imgUrl" class="form-label">圖片位址</label>
+                        <input
+                          id="imgUrl"
+                          type="text"
+                          class="form-control"
+                          :value="imageUrl"
+                        />
+                    </div>
+              </div>
           </div>
 <div class="modal-footer">
             <button
@@ -62,34 +76,21 @@ export default {
     uploadImg() {
       axios
         .post(
-          `${urlSetting.url}/api/${urlSetting.path}/admin/upload`,
-          {
-            data: this.img,
-          },
-          {
-            headers: {
-              "Content-Type": "multipart/form-data",
-            },
-          }
-        )
+          `${this.urlSetting.url}/api/${this.urlSetting.path}/admin/upload`, this.formData)
         .then((res) => {
-          console.log(res);
-          //   this.setSweetMessageSuccess(res.data.message);
-          //   Swal.fire(this.sweetMessage);
-          //   setTimeout(() => {
-          //     this.delProductModal.hide();
-          //     this.$emit("refreshProducts");
-          //   }, 1500);
+          this.imageUrl = res.data.imageUrl;
+          this.setSweetMessageSuccess("圖片新增成功");
+          Swal.fire(this.sweetMessage);
         })
         .catch((err) => {
-          console.log(err);
-          //   this.setSweetMessageError(err.data.message);
-          //   Swal.fire(this.sweetMessage);
+          this.setSweetMessageError(err.message);
+          Swal.fire(this.sweetMessage);
         });
     },
     handleUploadImg(e) {
-      this.img = e.target.files[0];
-      console.log(this.img);
+      if (!e.target.files.length) return;
+      this.formData = new FormData();
+      this.formData.append("file-to-upload", e.target.files[0]);
     },
     setSweetMessageSuccess(res) {
       this.sweetMessage.icon = "success";

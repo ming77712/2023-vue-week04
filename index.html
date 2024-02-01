@@ -195,14 +195,13 @@
         timer: 1500,
       };
 
-      const urlSetting = {
-        url: "https://ec-course-api.hexschool.io/v2",
-        path: "ming777",
-      };
-
       const app = {
         data() {
           return {
+            urlSetting: {
+              url: "https://ec-course-api.hexschool.io/v2",
+              path: "ming777",
+            },
             productDetailModal: null,
             productModal: null,
             delProductModal: null,
@@ -230,7 +229,7 @@
         methods: {
           login() {
             axios
-              .post(`${urlSetting.url}/admin/signin`, this.user)
+              .post(`${this.urlSetting.url}/admin/signin`, this.user)
               .then((res) => {
                 const { token, expired } = res.data;
                 document.cookie = `hexToken= ${token}; expires=${new Date(
@@ -255,7 +254,7 @@
             axios.defaults.headers.common["Authorization"] = this.token;
             if (this.token) {
               axios
-                .post(`${urlSetting.url}/api/user/check`)
+                .post(`${this.urlSetting.url}/api/user/check`)
                 .then(() => {
                   this.getAllProduct();
                 })
@@ -268,7 +267,7 @@
           getAllProduct(page = 1) {
             axios
               .get(
-                `${urlSetting.url}/api/${urlSetting.path}/admin/products?page=${page}`
+                `${this.urlSetting.url}/api/${this.urlSetting.path}/admin/products?page=${page}`
               )
               .then((res) => {
                 const { products, pagination } = res.data;

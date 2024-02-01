@@ -1,5 +1,5 @@
 export default {
-  props: ["currentProduct", "isNew"],
+  props: ["currentProduct", "isNew", "urlSetting"],
   data() {
     return {
       productModal: null,
@@ -237,7 +237,7 @@ export default {
         this.tempProduct.imagesUrl.push("");
       axios
         .post(
-          `${urlSetting.url}/api/${urlSetting.path}/admin/product`,
+          `${this.urlSetting.url}/api/${this.urlSetting.path}/admin/product`,
           {
             data: this.tempProduct,
           }
@@ -260,7 +260,7 @@ export default {
         this.tempProduct.imagesUrl.push("");
       axios
         .put(
-          `${urlSetting.url}/api/${urlSetting.path}/admin/product/${this.tempProduct.id}`,
+          `${this.urlSetting.url}/api/${this.urlSetting.path}/admin/product/${this.tempProduct.id}`,
           {
             data: this.tempProduct,
           }
