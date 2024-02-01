@@ -74,6 +74,8 @@ export default {
     </div>`,
   methods: {
     uploadImg() {
+      if(typeof this.formData !== "object")
+      return;
       axios
         .post(
           `${this.urlSetting.url}/api/${this.urlSetting.path}/admin/upload`, this.formData)
@@ -88,7 +90,6 @@ export default {
         });
     },
     handleUploadImg(e) {
-      if (!e.target.files.length) return;
       this.formData = new FormData();
       this.formData.append("file-to-upload", e.target.files[0]);
     },
